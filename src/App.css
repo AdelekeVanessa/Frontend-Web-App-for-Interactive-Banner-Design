@@ -98,7 +98,8 @@
 }
 
 /* Inputs and dropdowns */
-input, select {
+input,
+select {
   padding: 8px;
   border-radius: 4px;
   border: none;
@@ -154,8 +155,14 @@ input, select {
 
 /* Animations */
 @keyframes fadeIn {
-  from { opacity: 0; transform: scale(0.95); }
-  to { opacity: 1; transform: scale(1); }
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 .banner h1 {
@@ -213,7 +220,7 @@ input, select {
   visibility: hidden;
   background: black;
   color: #fff;
-  text-align: center;
+  text-align: right;
   padding: 5px;
   border-radius: 5px;
   position: absolute;
