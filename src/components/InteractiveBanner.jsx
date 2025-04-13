@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Banner from "./Banner";
-import BannerControls from "./BannerControls";
 import { motion } from "framer-motion";
 import { SketchPicker } from "react-color";
 import {
@@ -23,41 +22,49 @@ import {
   FaChevronDown,
   FaArrowsAlt,
 } from "react-icons/fa";
-import TableControls from "./TableControls";
 import "../App.css";
 import "../index.css";
 
 const InteractiveBanner = () => {
+  // Appearance State
   const [background, setBackground] = useState("#ffffff");
-  const [uploads, setUploads] = useState([]);
   const [text, setText] = useState(
     "I love creating at the intersection of code & creativity ✨\nFashion • Sports • Architecture • Automobiles\nMusic • Poetry • Film • Comics • Aesthetics"
   );
   const [selectedFont, setSelectedFont] = useState("Arial");
   const [textStyle, setTextStyle] = useState("");
   const [textColor, setTextColor] = useState("#000000");
-  const [drawingTool, setDrawingTool] = useState(null);
+
+  // Banner Dimensions
+  const [width, setWidth] = useState(800);
+  const [height, setHeight] = useState(400);
+  const [borderRadius, setBorderRadius] = useState(16);
+
+  // Image Management
+  const [uploads, setUploads] = useState([]);
+  const [currentImageIndex, setCurrentImageIndex] = useState(null);
+  const [activeImages, setActiveImages] = useState([]);
+  const [backgroundImage, setBackgroundImage] = useState(null);
+
+  // Drawing Tools
+  const [drawingTool, setDrawingTool] = useState(null); // 'pen', 'marker', 'brush', 'eraser'
+  const [strokeColor, setStrokeColor] = useState("#000000");
+  const [strokeWeight, setStrokeWeight] = useState(5);
+  const [strokeTransparency, setStrokeTransparency] = useState(1);
+
+  // UI Controls
   const [showTextOptions, setShowTextOptions] = useState(false);
   const [showToolOptions, setShowToolOptions] = useState(false);
   const [showDrawOptions, setShowDrawOptions] = useState(false);
   const [showElementOptions, setShowElementOptions] = useState(false);
-  const [showSettings, setShowSettings] = useState(false);
   const [showTableOptions, setShowTableOptions] = useState(false);
+
+  // Table controls state
   const [showAddOptions, setShowAddOptions] = useState(false);
   const [showRemoveOptions, setShowRemoveOptions] = useState(false);
-  const [weight, setWeight] = useState(5);
-  const [transparency, setTransparency] = useState(1);
-  const [width, setWidth] = useState("800");
-  const [height, setHeight] = useState(400);
-  const [borderRadius, setBorderRadius] = useState(16);
-  const [currentImageIndex, setCurrentImageIndex] = useState(null);
-  const [bannerImages, setBannerImages] = useState([]);
-  const [activeImages, setActiveImages] = useState([]);
-  const [backgroundImage, setBackgroundImage] = useState(null);
 
-  const handleBackgroundChange = (color) => {
-    setBackground(color.hex);
-  };
+  // Event Handlers
+  const handleBackgroundChange = (color) => setBackground(color.hex);
 
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
@@ -71,9 +78,7 @@ const InteractiveBanner = () => {
     }
   };
 
-  const handleTextColorChange = (color) => {
-    setTextColor(color.hex);
-  };
+  const handleTextColorChange = (color) => setTextColor(color.hex);
 
   const activateEyeDropper = () => {
     if (!window.EyeDropper) {
@@ -84,12 +89,8 @@ const InteractiveBanner = () => {
     const eyeDropper = new window.EyeDropper();
     eyeDropper
       .open()
-      .then((result) => {
-        setTextColor(result.sRGBHex);
-      })
-      .catch((e) => {
-        console.error(e);
-      });
+      .then((result) => setTextColor(result.sRGBHex))
+      .catch(console.error);
   };
 
   const handleRightClick = (index, e) => {
@@ -410,94 +411,84 @@ const InteractiveBanner = () => {
           </label>
           {showToolOptions && (
             <div className="dropdown">
+              {/* Drawing Tools */}
               <label onClick={() => setShowDrawOptions(!showDrawOptions)}>
                 Drawing Tools <FaChevronDown />
               </label>
               {showDrawOptions && (
                 <div className="sub-dropdown">
-                  <div className="tooltip-container group">
-                    <button
-                      onClick={() => setDrawingTool("pen")}
-                      className="text-[#405d67] bg-transparent hover:text-[#2f444c] p-2 transition-colors"
-                    >
-                      <FaPen />
-                    </button>
-                    <span className="tooltip group-hover:opacity-100">Pen</span>
-                  </div>
-
-                  <div className="tooltip-container group">
-                    <button
-                      onClick={() => setDrawingTool("marker")}
-                      className="text-[#405d67] bg-transparent hover:text-[#2f444c] p-2 transition-colors"
-                    >
-                      <FaHighlighter />
-                    </button>
-                    <span className="tooltip group-hover:opacity-100">
-                      Marker
-                    </span>
-                  </div>
-
-                  <div className="tooltip-container group">
-                    <button
-                      onClick={() => setDrawingTool("brush")}
-                      className="text-[#405d67] bg-transparent hover:text-[#2f444c] p-2 transition-colors"
-                    >
-                      <FaPaintBrush />
-                    </button>
-                    <span className="tooltip group-hover:opacity-100">
-                      Brush
-                    </span>
-                  </div>
-
-                  <div className="tooltip-container group">
-                    <button
-                      onClick={() => setDrawingTool("eraser")}
-                      className="text-[#405d67] bg-transparent hover:text-[#2f444c] p-2 transition-colors"
-                    >
-                      <FaEraser />
-                    </button>
-                    <span className="tooltip group-hover:opacity-100">
-                      Eraser
-                    </span>
-                  </div>
-
-                  {/* Settings button with sub-dropdown */}
-                  <div className="settings-container">
-                    <div className="tooltip-container">
-                      <button onClick={() => setShowSettings(!showSettings)}>
-                        <FaCog /> <FaChevronDown />
+                  <div className="flex flex-wrap gap-2 mb-2">
+                    {["pen", "marker", "brush", "eraser"].map((tool) => (
+                      <button
+                        key={tool}
+                        onClick={() => setDrawingTool(tool)}
+                        className={`p-2 rounded ${
+                          drawingTool === tool ? "bg-blue-200" : "bg-gray-200"
+                        }`}
+                        title={tool.charAt(0).toUpperCase() + tool.slice(1)}
+                      >
+                        {tool === "pen" && <FaPen />}
+                        {tool === "marker" && <FaHighlighter />}
+                        {tool === "brush" && <FaPaintBrush />}
+                        {tool === "eraser" && <FaEraser />}
                       </button>
-                      <span className="tooltip">Settings</span>
-                    </div>
-                    {showSettings && (
-                      <div className="sub-dropdown">
-                        <label>
-                          Weight:
-                          <input
-                            type="range"
-                            min="1"
-                            max="10"
-                            value={weight}
-                            onChange={(e) => setWeight(e.target.value)}
-                          />
-                        </label>
-                        <label>
-                          Transparency:
-                          <input
-                            type="range"
-                            min="0"
-                            max="1"
-                            step="0.1"
-                            value={transparency}
-                            onChange={(e) => setTransparency(e.target.value)}
-                          />
-                        </label>
-                      </div>
-                    )}
+                    ))}
                   </div>
+
+                  {drawingTool && drawingTool !== "eraser" && (
+                    <div className="mb-2">
+                      <label>Stroke Color:</label>
+                      <SketchPicker
+                        color={strokeColor}
+                        onChangeComplete={(color) => setStrokeColor(color.hex)}
+                      />
+                    </div>
+                  )}
+
+                  <div className="mb-2">
+                    <label>Stroke Width: {strokeWeight}px</label>
+                    <input
+                      type="range"
+                      min="1"
+                      max="50"
+                      value={strokeWeight}
+                      onChange={(e) =>
+                        setStrokeWeight(parseInt(e.target.value))
+                      }
+                    />
+                  </div>
+
+                  <div className="mb-2">
+                    <label>
+                      Transparency: {Math.round(strokeTransparency * 100)}%
+                    </label>
+                    <input
+                      type="range"
+                      min="0"
+                      max="1"
+                      step="0.1"
+                      value={strokeTransparency}
+                      onChange={(e) =>
+                        setStrokeTransparency(parseFloat(e.target.value))
+                      }
+                    />
+                  </div>
+
+                  <button
+                    onClick={() => {
+                      const canvas = document.querySelector("canvas");
+                      canvas
+                        ?.getContext("2d")
+                        .clearRect(0, 0, canvas.width, canvas.height);
+                    }}
+                    className="mt-2 p-2 bg-red-100 rounded"
+                  >
+                    Clear Drawings
+                  </button>
                 </div>
               )}
 
+              {/* Elements */}
               <label onClick={() => setShowElementOptions(!showElementOptions)}>
                 Elements <FaChevronDown />
               </label>
@@ -505,31 +496,32 @@ const InteractiveBanner = () => {
                 <div className="sub-dropdown">
                   <div className="tooltip-container">
                     <button>
-                      <FaShapes />{" "}
+                      <FaShapes />
                     </button>
                     <span className="tooltip">Shapes</span>
                   </div>
                   <div className="tooltip-container">
                     <button>
-                      <FaGripLines />{" "}
+                      <FaGripLines />
                     </button>
                     <span className="tooltip">Lines</span>
                   </div>
                   <div className="tooltip-container">
                     <button>
-                      <FaIcons />{" "}
+                      <FaIcons />
                     </button>
                     <span className="tooltip">Icons</span>
                   </div>
                   <div className="tooltip-container">
                     <button>
-                      <FaSmile />{" "}
+                      <FaSmile />
                     </button>
                     <span className="tooltip">Stickers</span>
                   </div>
                 </div>
               )}
 
+              {/* Table Options */}
               <label onClick={() => setShowTableOptions(!showTableOptions)}>
                 Table <FaChevronDown />
               </label>
@@ -586,33 +578,31 @@ const InteractiveBanner = () => {
       <div
         className="banner-container"
         style={{ width: "100%", padding: "0 20px" }}
-      >
-        {/* Banner Display */}
-        <div
-          className="banner-container"
-          style={{ width: "100%", padding: "0 20px" }}
-        ></div>
+      ></div>
 
-        <Banner
-          text={
-            text ||
-            "Creating at the intersection of code & creativity ✨\nFashion • Sports • Architecture • Automobiles\nMusic • Poetry • Film • Comics • Aesthetics"
-          }
-          bgColor={background}
-          fontSize={24}
-          textColor={textColor}
-          backgroundImage={backgroundImage}
-          activeImages={activeImages}
-          scrollY={0}
-          width={width}
-          height={height}
-          borderRadius={borderRadius}
-          selectedFont={selectedFont}
-          textStyle={textStyle}
-          onImageDrop={handleImageDrop}
-          onImageDelete={handleImageDelete}
-        />
-      </div>
+      <Banner
+        text={
+          text ||
+          "I love creating at the intersection of code & creativity ✨\nFashion • Sports • Architecture • Automobiles\nMusic • Poetry • Film • Comics • Aesthetics"
+        }
+        bgColor={background}
+        fontSize={24}
+        textColor={textColor}
+        backgroundImage={backgroundImage}
+        activeImages={activeImages}
+        scrollY={0}
+        width={width}
+        height={height}
+        borderRadius={borderRadius}
+        selectedFont={selectedFont}
+        textStyle={textStyle}
+        onImageDrop={handleImageDrop}
+        onImageDelete={handleImageDelete}
+        drawingTool={drawingTool}
+        strokeColor={strokeColor}
+        strokeWeight={strokeWeight}
+        transparency={strokeTransparency}
+      />
     </div>
   );
 };

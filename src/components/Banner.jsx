@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import DraggableImage from "./DraggableImage";
 
@@ -16,12 +16,14 @@ export default function Banner({
   textColor,
   onImageDrop,
   onImageDelete,
+  drawingTool,
+  strokeColor,
+  strokeWeight,
+  transparency,
 }) {
-  const DEFAULT_TEXT = `I love creating at the intersection of code & creativity ✨
-Fashion • Sports • Architecture • Automobiles
-Music • Poetry • Film • Comics • Aesthetics`;
-
-  const displayText = text || DEFAULT_TEXT;
+  const [isDrawing, setIsDrawing] = useState(false);
+  const canvasRef = useRef(null);
+  const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 });
 
   const handleDrop = (e) => {
     e.preventDefault();
@@ -33,6 +35,85 @@ Music • Poetry • Film • Comics • Aesthetics`;
     e.preventDefault();
   };
 
+  // Initialize canvas size
+  useEffect(() => {
+    setCanvasSize({ width, height });
+  }, [width, height]);
+
+  // Setup canvas and drawing context
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext("2d");
+    canvas.width = width;
+    canvas.height = height;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }, [width, height, drawingTool]);
+
+  const startDrawing = (e) => {
+    if (!drawingTool) return;
+
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext("2d");
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    setIsDrawing(true);
+
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+
+    switch (drawingTool) {
+      case "pen":
+        ctx.globalAlpha = transparency;
+        ctx.lineWidth = strokeWeight;
+        ctx.lineCap = "round";
+        ctx.lineJoin = "round";
+        ctx.strokeStyle = strokeColor;
+        break;
+      case "marker":
+        ctx.globalAlpha = transparency * 0.7;
+        ctx.lineWidth = strokeWeight * 1.5;
+        ctx.lineCap = "square";
+        ctx.lineJoin = "bevel";
+        ctx.strokeStyle = strokeColor;
+        break;
+      case "brush":
+        ctx.globalAlpha = transparency * 0.8;
+        ctx.lineWidth = strokeWeight * 2;
+        ctx.lineCap = "round";
+        ctx.lineJoin = "round";
+        ctx.strokeStyle = strokeColor;
+        break;
+      case "eraser":
+        ctx.globalAlpha = 1;
+        ctx.lineWidth = strokeWeight * 2;
+        ctx.lineCap = "round";
+        ctx.lineJoin = "round";
+        ctx.strokeStyle = bgColor;
+        break;
+    }
+  };
+
+  const draw = (e) => {
+    if (!isDrawing || !drawingTool) return;
+
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext("2d");
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    ctx.lineTo(x, y);
+    ctx.stroke();
+  };
+
+  const stopDrawing = () => {
+    setIsDrawing(false);
+  };
+
   return (
     <motion.div
       className="flex items-center justify-center text-white font-bold shadow-lg relative overflow-hidden mx-auto"
@@ -41,16 +122,11 @@ Music • Poetry • Film • Comics • Aesthetics`;
         width: width === "full" ? "100%" : `${width}px`,
         height: `${height}px`,
         borderRadius: `${borderRadius}px`,
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        textAlign: "center",
-        position: "relative",
         margin: "20px 0",
+        maxWidth: "100%",
+        maxHeight: "100%",
+        overflow: "hidden",
       }}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
       onDrop={handleDrop}
       onDragOver={handleDragOver}
     >
@@ -61,6 +137,30 @@ Music • Poetry • Film • Comics • Aesthetics`;
           alt="Banner Background"
           className="absolute w-full h-full object-cover opacity-50"
           style={{ borderRadius: `${borderRadius}px` }}
+        />
+      )}
+
+      {/* Drawing Canvas */}
+      {drawingTool && (
+        <canvas
+          ref={canvasRef}
+          className="absolute top-0 left-0 z-20"
+          style={{
+            width: `${width}px`,
+            height: `${height}px`,
+            cursor:
+              drawingTool === "eraser"
+                ? `url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'><circle cx='8' cy='8' r='8' fill='white'/><circle cx='8' cy='8' r='6' fill='${encodeURIComponent(
+                    bgColor
+                  )}'/></svg>") 8 8, auto`
+                : `url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'><circle cx='8' cy='8' r='8' fill='${encodeURIComponent(
+                    drawingTool === "eraser" ? bgColor : strokeColor
+                  )}'/></svg>") 8 8, auto`,
+          }}
+          onMouseDown={startDrawing}
+          onMouseMove={draw}
+          onMouseUp={stopDrawing}
+          onMouseLeave={stopDrawing}
         />
       )}
 
@@ -108,7 +208,8 @@ Music • Poetry • Film • Comics • Aesthetics`;
           color: textColor,
         }}
       >
-        {displayText}
+        {text ||
+          "I love creating at the intersection of code & creativity ✨\nFashion • Sports • Architecture • Automobiles\nMusic • Poetry • Film • Comics • Aesthetics"}
       </span>
     </motion.div>
   );

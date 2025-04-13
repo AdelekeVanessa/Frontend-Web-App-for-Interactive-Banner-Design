@@ -298,13 +298,13 @@ select {
   background-color: #eaeaea;
   border-radius: 16px;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-  position: relative;
+  position: fixed;
   overflow: hidden;
   display: flex;
   justify-content: center;
   align-items: center;
   background-size: cover;
-  background-position: center;
+  background-position: left;
   transition: all 0.3s ease;
 }
 
