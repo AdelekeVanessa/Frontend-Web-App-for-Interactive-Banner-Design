@@ -1,6 +1,6 @@
 # Interactive Banner Designer
 
-![Banner Designer Screenshot](public/screenshot.png) <!-- Add a screenshot later -->
+![Banner Designer Screenshot](/Images/Interactive Banner Image.png)
 
 A responsive web application for creating custom banners with real-time previews, image uploads, and extensive styling options.
 
@@ -92,6 +92,8 @@ Frontend-Web-App-for-Interactive-Banner-Design/
 5. Open http://localhost:3000 in your browser
 
 ## How to Use
+
+![Banner Designer Video](/Video/Interactive Banner.mp4)
 
 ### Customize Background:
 

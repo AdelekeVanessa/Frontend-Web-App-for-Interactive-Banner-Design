@@ -1,10 +1,18 @@
+/* ================ IMPORTS & SETUP ================ */
 @import url("https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Anton&family=Bebas+Neue&family=Georgia&family=Lato&family=Roboto&display=swap");
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* =============== Base Layout =============== */
+/* ================ GLOBAL STYLES ================ */
+:root {
+  --primary-color: #405d67;
+  --secondary-color: #8baaad;
+  --accent-color: #31484f;
+}
+
+/* ================ BASE LAYOUT ================ */
 html,
 body,
 #root {
@@ -15,37 +23,37 @@ body,
   display: flex;
   font-family: "Roboto", sans-serif;
   background: url("public/Images/default 12.jpg") no-repeat center center fixed;
-  position: fixed;
   background-size: cover;
+  position: fixed;
 }
 
-/* =============== Main Container =============== */
+/* ================ MAIN CONTAINERS ================ */
 .interactive-container {
   margin-left: 560px;
-  margin-right: 380px;
-  margin-top: 40px;
-  border-radius: 20px;
-  height: 93vh;
-  width: 1238px;
-  display: flex;
+  margin-right: 100px;
+  margin-top: 30px;
+  width: 1210px;
+  height: 810px;
+  display: absolute;
   align-items: center;
   justify-content: center;
-  background: #405d67;
+  background: var(--primary-color);
+  border-radius: 20px;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
 }
 
-/* =============== Sidebar =============== */
+/* ================ SIDEBAR COMPONENT ================ */
 .sidebar {
   position: fixed;
   top: 50px;
   bottom: 20px;
   left: 160px;
-  border-radius: 20px;
-  border: 10px solid #405d67;
   width: 300px;
   height: 90vh;
-  background: #8baaad;
   padding: 16px;
+  background: var(--secondary-color);
+  border: 10px solid var(--primary-color);
+  border-radius: 20px;
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -58,14 +66,15 @@ body,
   font-size: 2.2rem;
   text-align: center;
   margin-bottom: 12px;
-  color: #31484f;
+  color: var(--accent-color);
 }
 
-/* =============== Banner Size Controls =============== */
+/* ================ FORM CONTROLS ================ */
+/* Control Groups */
 .control-group {
   margin: 12px 0;
-  background: #8baaadf6;
   padding: 10px;
+  background: rgba(139, 170, 173, 0.96);
   border-radius: 8px;
   transition: all 0.3s ease;
 }
@@ -78,30 +87,32 @@ body,
   display: block;
   margin-bottom: 6px;
   font-size: 0.9rem;
-  color: #405d67;
+  color: var(--primary-color);
   font-weight: bold;
 }
 
+/* Range Inputs */
 .control-group input[type="range"] {
   width: 100%;
   margin-bottom: 8px;
-  cursor: pointer;
-  background: #405d67;
   height: 6px;
+  background: var(--primary-color);
   border-radius: 3px;
   -webkit-appearance: none;
+  cursor: pointer;
 }
 
 .control-group input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
   width: 18px;
   height: 18px;
-  background: #8baaad;
-  border: 2px solid #405d67;
+  background: var(--secondary-color);
+  border: 2px solid var(--primary-color);
   border-radius: 50%;
   cursor: pointer;
 }
 
+/* Buttons */
 .button-group {
   display: flex;
   gap: 8px;
@@ -109,7 +120,7 @@ body,
 }
 
 .button-group button {
-  background: #405d67;
+  background: var(--primary-color);
   color: rgba(255, 255, 255, 0.723);
   border: none;
   border-radius: 4px;
@@ -126,19 +137,19 @@ body,
   transform: scale(1.1);
 }
 
-/* =============== Tool Sections =============== */
+/* ================ TOOL SECTIONS ================ */
 .tool-section {
-  background: #405d67;
+  background: var(--primary-color);
   padding: 12px;
   border-radius: 8px;
-  color: #ffffffbd;
+  color: rgba(255, 255, 255, 0.74);
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
   transition: all 0.3s ease;
 }
 
 .tool-section:hover {
   background: #cecece;
-  color: #405d67;
+  color: var(--primary-color);
   transform: scale(1.1);
 }
 
@@ -154,19 +165,19 @@ body,
 
 .tool-section label:hover {
   transform: scale(1.05);
-  background: #405d67;
+  background: var(--primary-color);
   color: white;
   border-radius: 6px;
 }
 
-/* Dropdowns */
+/* ================ DROPDOWNS ================ */
 .dropdown {
   display: flex;
   flex-direction: column;
   gap: 8px;
   margin-top: 8px;
   padding: 8px;
-  background: #8baaad48;
+  background: rgba(139, 170, 173, 0.28);
   border-radius: 6px;
 }
 
@@ -180,18 +191,18 @@ body,
   border-radius: 6px;
 }
 
-/* Form Elements */
+/* ================ FORM ELEMENTS ================ */
 input,
 select {
+  width: 100%;
   padding: 8px;
   border-radius: 4px;
   border: none;
   background: #fff;
   color: #333;
-  width: 100%;
 }
 
-/* Uploads Section */
+/* ================ IMAGE UPLOADS ================ */
 .uploads-container {
   display: flex;
   gap: 8px;
@@ -215,11 +226,10 @@ select {
 }
 
 .thumbnail-active {
-  border: 2px solid #405d67;
-  box-shadow: 0 0 0 2px #8baaad;
+  border: 2px solid var(--primary-color);
+  box-shadow: 0 0 0 2px var(--secondary-color);
 }
 
-/* Thumbnail styles */
 .thumbnail-container {
   position: relative;
   display: inline-block;
@@ -231,11 +241,11 @@ select {
   bottom: 0;
   left: 0;
   right: 0;
-  background: rgba(0, 0, 0, 0.7);
-  color: white;
   padding: 2px;
   font-size: 0.7rem;
   text-align: center;
+  color: white;
+  background: rgba(0, 0, 0, 0.7);
   opacity: 0;
   transition: opacity 0.3s;
 }
@@ -244,7 +254,7 @@ select {
   opacity: 1;
 }
 
-/* Draggable image styles */
+/* ================ DRAGGABLE ELEMENTS ================ */
 .draggable-image {
   border: 2px dashed transparent;
   transition: all 0.2s;
@@ -260,11 +270,11 @@ select {
   bottom: 0;
   width: 15px;
   height: 15px;
-  background: #405d67;
+  background: var(--primary-color);
   cursor: nwse-resize;
 }
 
-/* Tooltips */
+/* ================ TOOLTIPS ================ */
 .tooltip-container {
   position: relative;
   display: inline-flex;
@@ -272,39 +282,39 @@ select {
 
 .tooltip {
   position: absolute;
-  background: #405d67;
-  color: white;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 0.8rem;
-  white-space: nowrap;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.2s ease;
-  margin-left: 8px;
   left: 50%;
   top: 50%;
+  margin-left: 8px;
+  padding: 4px 8px;
+  font-size: 0.8rem;
+  white-space: nowrap;
+  color: white;
+  background: var(--primary-color);
+  border-radius: 4px;
+  opacity: 0;
+  pointer-events: none;
   transform: translateY(-50%);
+  transition: opacity 0.2s ease;
 }
 
 .tooltip-container:hover .tooltip {
   opacity: 1;
 }
 
-/* Banner Display */
+/* ================ BANNER DISPLAY ================ */
 .banner {
   width: 800px;
   height: 400px;
+  position: fixed;
+  display: absolute;
+  justify-content: center;
+  align-items: center;
   background-color: #eaeaea;
   border-radius: 16px;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-  position: fixed;
   overflow: hidden;
-  display: flex;
-  justify-content: center;
-  align-items: center;
   background-size: cover;
-  background-position: left;
+  background-position: center;
   transition: all 0.3s ease;
 }
 
@@ -319,13 +329,13 @@ select {
 .banner h1 {
   font-size: 2.5rem;
   color: #222;
-  background: rgba(255, 255, 255, 0.6);
   padding: 10px 20px;
   border-radius: 30px;
+  background: rgba(255, 255, 255, 0.6);
   animation: fadeIn 0.5s ease-in-out;
 }
 
-/* Animations */
+/* ================ ANIMATIONS ================ */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -337,21 +347,20 @@ select {
   }
 }
 
-/* Color Picker Styles */
+/* ================ COLOR PICKER ================ */
 .color-picker-container {
   margin: 12px 0;
 }
 
 .eye-dropper-btn {
-  background: #f0f0f0;
-  border: 1px solid #ddd;
   height: 42px;
   display: flex;
   align-items: center;
   justify-content: center;
+  background: #f0f0f0;
+  border: 1px solid #ddd;
 }
 
-/* Make the color picker popup more visible */
 .sketch-picker {
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.2) !important;
   border-radius: 8px !important;
@@ -359,12 +368,10 @@ select {
   z-index: 1000 !important;
 }
 
-/* Style the preset colors */
 .sketch-picker div[style*="flex-wrap: wrap"] {
   padding: 8px 0 0 0 !important;
 }
 
-/* Add hover effect to color swatches */
 .sketch-picker div[style*="flex-wrap: wrap"] > div {
   transition: transform 0.2s ease;
 }

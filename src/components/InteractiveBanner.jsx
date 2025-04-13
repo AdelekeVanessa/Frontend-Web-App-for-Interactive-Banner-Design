@@ -47,7 +47,7 @@ const InteractiveBanner = () => {
   const [backgroundImage, setBackgroundImage] = useState(null);
 
   // Drawing Tools
-  const [drawingTool, setDrawingTool] = useState(null); // 'pen', 'marker', 'brush', 'eraser'
+  const [drawingTool, setDrawingTool] = useState(null);
   const [strokeColor, setStrokeColor] = useState("#000000");
   const [strokeWeight, setStrokeWeight] = useState(5);
   const [strokeTransparency, setStrokeTransparency] = useState(1);

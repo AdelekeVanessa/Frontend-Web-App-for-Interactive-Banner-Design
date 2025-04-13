@@ -28,14 +28,12 @@ export default function BannerControls({
 
   return (
     <div className="mt-6 bg-white p-4 shadow-md rounded-lg w-full max-w-md">
-      {/* Other controls (width, height, border radius, etc.) */}
-
       {/* Font Selection */}
       <div className="form-group mb-4">
         <label className="block mb-2 font-medium">Font</label>
         <select
           className="w-full p-2 border rounded-lg"
-          onChange={(e) => setSelectedFont(e.target.value)} // Update font
+          onChange={(e) => setSelectedFont(e.target.value)}
         >
           <option value="Abril Fatface">Abril Fatface</option>
           <option value="Anton">Anton</option>
@@ -85,7 +83,6 @@ export default function BannerControls({
           <option value="Ubuntu">Ubuntu</option>
           <option value="Verdana">Verdana</option>
           <option value="Zilla Slab">Zilla Slab</option>
-          {/* Add more font options as needed */}
         </select>
       </div>
 
@@ -94,7 +91,7 @@ export default function BannerControls({
         <label className="block mb-2 font-medium">Text Style</label>
         <select
           className="w-full p-2 border rounded-lg"
-          onChange={(e) => setTextStyle(e.target.value)} // Update text style
+          onChange={(e) => setTextStyle(e.target.value)}
         >
           <option value="normal">Normal</option>
           <option value="bold">Bold</option>
@@ -104,7 +101,6 @@ export default function BannerControls({
           <option value="uppercase">Uppercase</option>
           <option value="lowercase">Lowercase</option>
           <option value="capitalize">Capitalize</option>
-          {/* Add more text styles if needed */}
         </select>
       </div>
 
@@ -112,12 +108,10 @@ export default function BannerControls({
       <div className="form-group mb-4">
         <label className="block mb-2 font-medium">Text Color</label>
         <SketchPicker
-          color={setTextColor} // Pass current text color
-          onChangeComplete={(color) => setTextColor(color.hex)} // Update text color
+          color={setTextColor}
+          onChangeComplete={(color) => setTextColor(color.hex)}
         />
       </div>
-
-      {/* Other controls (font size, background color, image upload, etc.) */}
     </div>
   );
 }
