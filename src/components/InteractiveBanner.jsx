@@ -119,7 +119,7 @@ const InteractiveBanner = () => {
     <div className="interactive-container">
       {/* Sidebar Form */}
       <div className="sidebar">
-        <h2>Design Form</h2>
+        <h2>DESIGN FORM</h2>
 
         {/* Background Upload */}
         <div className="tool-section">

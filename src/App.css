@@ -14,8 +14,9 @@ body,
   width: 100%;
   display: flex;
   font-family: "Roboto", sans-serif;
-  background: beige;
+  background: url("public/Images/default 12.jpg") no-repeat center center fixed;
   position: fixed;
+  background-size: cover;
 }
 
 /* =============== Main Container =============== */
@@ -54,10 +55,10 @@ body,
 }
 
 .sidebar h2 {
-  font-size: 2.4rem;
+  font-size: 2.2rem;
   text-align: center;
   margin-bottom: 12px;
-  color: #405d67;
+  color: #31484f;
 }
 
 /* =============== Banner Size Controls =============== */
@@ -138,6 +139,7 @@ body,
 .tool-section:hover {
   background: #cecece;
   color: #405d67;
+  transform: scale(1.1);
 }
 
 .tool-section label {
@@ -208,7 +210,7 @@ select {
 }
 
 .upload-thumbnail:hover {
-  transform: scale(1.1);
+  transform: scale(1.2);
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
 }
 
