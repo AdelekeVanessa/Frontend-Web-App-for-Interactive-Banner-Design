@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { SketchPicker } from "react-color";
 import {
   FaUpload,
+  FaEyeDropper,
   FaTextHeight,
   FaTools,
   FaShapes,
@@ -20,6 +21,7 @@ import {
   FaEraser,
   FaCog,
   FaChevronDown,
+  FaArrowsAlt,
 } from "react-icons/fa";
 import TableControls from "./TableControls";
 import "../App.css";
@@ -28,9 +30,12 @@ import "../index.css";
 const InteractiveBanner = () => {
   const [background, setBackground] = useState("#ffffff");
   const [uploads, setUploads] = useState([]);
-  const [text, setText] = useState("");
+  const [text, setText] = useState(
+    "I love creating at the intersection of code & creativity ✨\nFashion • Sports • Architecture • Automobiles\nMusic • Poetry • Film • Comics • Aesthetics"
+  );
   const [selectedFont, setSelectedFont] = useState("Arial");
   const [textStyle, setTextStyle] = useState("");
+  const [textColor, setTextColor] = useState("#000000");
   const [drawingTool, setDrawingTool] = useState(null);
   const [showTextOptions, setShowTextOptions] = useState(false);
   const [showToolOptions, setShowToolOptions] = useState(false);
@@ -42,6 +47,13 @@ const InteractiveBanner = () => {
   const [showRemoveOptions, setShowRemoveOptions] = useState(false);
   const [weight, setWeight] = useState(5);
   const [transparency, setTransparency] = useState(1);
+  const [width, setWidth] = useState("800");
+  const [height, setHeight] = useState(400);
+  const [borderRadius, setBorderRadius] = useState(16);
+  const [currentImageIndex, setCurrentImageIndex] = useState(null);
+  const [bannerImages, setBannerImages] = useState([]);
+  const [activeImages, setActiveImages] = useState([]);
+  const [backgroundImage, setBackgroundImage] = useState(null);
 
   const handleBackgroundChange = (color) => {
     setBackground(color.hex);
@@ -50,8 +62,57 @@ const InteractiveBanner = () => {
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
     if (file) {
-      setUploads([...uploads, URL.createObjectURL(file)]);
+      const newUploads = [...uploads, URL.createObjectURL(file)];
+      setUploads(newUploads);
+      if (currentImageIndex === null) {
+        setCurrentImageIndex(0);
+        setBackgroundImage(URL.createObjectURL(file));
+      }
     }
+  };
+
+  const handleTextColorChange = (color) => {
+    setTextColor(color.hex);
+  };
+
+  const activateEyeDropper = () => {
+    if (!window.EyeDropper) {
+      alert("Your browser does not support the Eye Dropper API.");
+      return;
+    }
+
+    const eyeDropper = new window.EyeDropper();
+    eyeDropper
+      .open()
+      .then((result) => {
+        setTextColor(result.sRGBHex);
+      })
+      .catch((e) => {
+        console.error(e);
+      });
+  };
+
+  const handleRightClick = (index, e) => {
+    e.preventDefault();
+    if (window.confirm("Delete this image?")) {
+      const newUploads = [...uploads];
+      newUploads.splice(index, 1);
+      setUploads(newUploads);
+      if (currentImageIndex === index) {
+        setCurrentImageIndex(null);
+        setBackgroundImage(null);
+      }
+    }
+  };
+
+  const handleImageDrop = (imageIndex) => {
+    setActiveImages([...activeImages, uploads[imageIndex]]);
+  };
+
+  const handleImageDelete = (index) => {
+    const newActiveImages = [...activeImages];
+    newActiveImages.splice(index, 1);
+    setActiveImages(newActiveImages);
   };
 
   return (
@@ -79,12 +140,25 @@ const InteractiveBanner = () => {
           </label>
           <div className="uploads-container">
             {uploads.map((file, index) => (
-              <img
+              <div
                 key={index}
-                src={file}
-                alt="Uploaded"
-                className="upload-thumbnail"
-              />
+                className="thumbnail-container"
+                onContextMenu={(e) => handleRightClick(index, e)}
+                draggable
+                onDragStart={(e) => e.dataTransfer.setData("imageIndex", index)}
+              >
+                <img
+                  src={file}
+                  alt="Uploaded"
+                  className={`upload-thumbnail ${
+                    currentImageIndex === index ? "thumbnail-active" : ""
+                  }`}
+                  onClick={() => {
+                    setCurrentImageIndex(index);
+                    setBackgroundImage(file);
+                  }}
+                />
+              </div>
             ))}
           </div>
         </div>
@@ -96,21 +170,111 @@ const InteractiveBanner = () => {
           </label>
           {showTextOptions && (
             <div className="dropdown">
+              {/* Text Input */}
               <input
                 type="text"
                 value={text}
                 onChange={(e) => setText(e.target.value)}
                 placeholder="Enter text..."
+                style={{
+                  fontFamily: selectedFont,
+                  fontWeight:
+                    textStyle === "bold"
+                      ? "bold"
+                      : textStyle === "lighter"
+                      ? "lighter"
+                      : "normal",
+                  fontStyle:
+                    textStyle === "italic"
+                      ? "italic"
+                      : textStyle === "oblique"
+                      ? "oblique"
+                      : "normal",
+                  textDecoration:
+                    textStyle === "underline"
+                      ? "underline"
+                      : textStyle === "strikethrough"
+                      ? "line-through"
+                      : "none",
+                  textTransform:
+                    textStyle === "uppercase"
+                      ? "uppercase"
+                      : textStyle === "lowercase"
+                      ? "lowercase"
+                      : textStyle === "capitalize"
+                      ? "capitalize"
+                      : "none",
+                }}
               />
+
+              {/* Font Style Selector */}
+              <label
+                htmlFor="font-style"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Font Style
+              </label>
               <select
                 value={selectedFont}
                 onChange={(e) => setSelectedFont(e.target.value)}
               >
+                <option value="Abril Fatface">Abril Fatface</option>
+                <option value="Anton">Anton</option>
                 <option value="Arial">Arial</option>
+                <option value="Arial Black">Arial Black</option>
+                <option value="Book Antiqua">Book Antiqua</option>
+                <option value="Bebas Neue">Bebas Neue</option>
+                <option value="Cairo">Cairo</option>
+                <option value="Caveat">Caveat</option>
+                <option value="Century Gothic">Century Gothic</option>
+                <option value="Cinzel">Cinzel</option>
+                <option value="Comic Sans MS">Comic Sans MS</option>
+                <option value="Consolas">Consolas</option>
+                <option value="Courier">Courier</option>
                 <option value="Courier New">Courier New</option>
+                <option value="Dancing Script">Dancing Script</option>
+                <option value="Droid Sans">Droid Sans</option>
+                <option value="Frank Ruhl Libre">Frank Ruhl Libre</option>
                 <option value="Georgia">Georgia</option>
+                <option value="Great Vibes">Great Vibes</option>
+                <option value="Impact">Impact</option>
+                <option value="Indie Flower">Indie Flower</option>
+                <option value="Josefin Sans">Josefin Sans</option>
+                <option value="Lato">Lato</option>
+                <option value="Lobster">Lobster</option>
+                <option value="Lucida Sans Unicode">Lucida Sans Unicode</option>
+                <option value="Lora">Lora</option>
+                <option value="Merriweather">Merriweather</option>
+                <option value="Montserrat">Montserrat</option>
+                <option value="Nunito">Nunito</option>
+                <option value="Open Sans">Open Sans</option>
+                <option value="Oswald">Oswald</option>
+                <option value="Pacifico">Pacifico</option>
+                <option value="Palatino Linotype">Palatino Linotype</option>
+                <option value="Playfair Display">Playfair Display</option>
+                <option value="Poppins">Poppins</option>
+                <option value="Quicksand">Quicksand</option>
+                <option value="Raleway">Raleway</option>
+                <option value="Roboto">Roboto</option>
+                <option value="Roboto Slab">Roboto Slab</option>
+                <option value="Righteous">Righteous</option>
+                <option value="Slabo 27px">Slabo 27px</option>
+                <option value="Source Sans Pro">Source Sans Pro</option>
+                <option value="Tahoma">Tahoma</option>
                 <option value="Times New Roman">Times New Roman</option>
+                <option value="Trebuchet MS">Trebuchet MS</option>
+                <option value="Ubuntu">Ubuntu</option>
+                <option value="Verdana">Verdana</option>
+                <option value="Zilla Slab">Zilla Slab</option>
               </select>
+
+              {/* Text Style Selector */}
+              <label
+                htmlFor="text-style"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Text Style
+              </label>
               <select
                 value={textStyle}
                 onChange={(e) => setTextStyle(e.target.value)}
@@ -119,9 +283,124 @@ const InteractiveBanner = () => {
                 <option value="bold">Bold</option>
                 <option value="italic">Italic</option>
                 <option value="underline">Underline</option>
+                <option value="strikethrough">Strikethrough</option>
+                <option value="uppercase">Uppercase</option>
+                <option value="lowercase">Lowercase</option>
+                <option value="capitalize">Capitalize</option>
+                <option value="oblique">Oblique</option>
+                <option value="lighter">Lighter</option>
+                <option value="bolder">Bolder</option>
+                <option value="initial">Initial</option>
+                <option value="inherit">Inherit</option>
               </select>
+
+              {/* Text Color Picker Dropdown */}
+              <div className="color-picker-container">
+                <label className="block mb-2 font-medium">Text Color</label>
+                <div className="flex items-center gap-2">
+                  <SketchPicker
+                    color={textColor}
+                    onChangeComplete={handleTextColorChange}
+                    presetColors={[
+                      "#000000",
+                      "#FFFFFF",
+                      "#FF0000",
+                      "#00FF00",
+                      "#0000FF",
+                      "#FFFF00",
+                      "#FF00FF",
+                      "#00FFFF",
+                      "#FFA500",
+                      "#800080",
+                      "#A52A2A",
+                      "#808080",
+                    ]}
+                    width="220px"
+                  />
+                  <button
+                    onClick={activateEyeDropper}
+                    className="eye-dropper-btn"
+                    title="Pick color from screen"
+                  >
+                    <FaEyeDropper size={20} />
+                  </button>
+                </div>
+              </div>
             </div>
           )}
+        </div>
+
+        {/* Banner Size Control section */}
+        <div className="tool-section">
+          <label>
+            <FaArrowsAlt /> Banner Size
+          </label>
+
+          {/* Width Control */}
+          <div className="control-group">
+            <label>Width: {width}px</label>
+            <input
+              type="range"
+              min="100"
+              max="1200"
+              value={width}
+              onChange={(e) => setWidth(parseInt(e.target.value))}
+            />
+            <div className="button-group">
+              <button
+                onClick={() => setWidth((prev) => Math.max(100, prev - 50))}
+              >
+                <FaMinus />
+              </button>
+              <button onClick={() => setWidth((prev) => prev + 50)}>
+                <FaPlus />
+              </button>
+            </div>
+          </div>
+
+          {/* Height Control */}
+          <div className="control-group">
+            <label>Height: {height}px</label>
+            <input
+              type="range"
+              min="50"
+              max="800"
+              value={height}
+              onChange={(e) => setHeight(parseInt(e.target.value))}
+            />
+            <div className="button-group">
+              <button
+                onClick={() => setHeight((prev) => Math.max(50, prev - 50))}
+              >
+                <FaMinus />
+              </button>
+              <button onClick={() => setHeight((prev) => prev + 50)}>
+                <FaPlus />
+              </button>
+            </div>
+          </div>
+
+          {/* Border Radius Control */}
+          <div className="control-group">
+            <label>Border Radius: {borderRadius}px</label>
+            <input
+              type="range"
+              min="0"
+              max="100"
+              value={borderRadius}
+              onChange={(e) => setBorderRadius(parseInt(e.target.value))}
+            />
+            <div className="button-group">
+              <button
+                onClick={() => setBorderRadius((prev) => Math.max(0, prev - 5))}
+              >
+                <FaMinus />
+              </button>
+              <button onClick={() => setBorderRadius((prev) => prev + 5)}>
+                <FaPlus />
+              </button>
+            </div>
+          </div>
         </div>
 
         {/* Tools Section */}
@@ -131,35 +410,57 @@ const InteractiveBanner = () => {
           </label>
           {showToolOptions && (
             <div className="dropdown">
-              <div onClick={() => setShowDrawOptions(!showDrawOptions)}>
+              <label onClick={() => setShowDrawOptions(!showDrawOptions)}>
                 Drawing Tools <FaChevronDown />
-              </div>
+              </label>
               {showDrawOptions && (
                 <div className="sub-dropdown">
-                  <div className="tooltip-container">
-                    <button onClick={() => setDrawingTool("pen")}>
-                      <FaPen />{" "}
+                  <div className="tooltip-container group">
+                    <button
+                      onClick={() => setDrawingTool("pen")}
+                      className="text-[#405d67] bg-transparent hover:text-[#2f444c] p-2 transition-colors"
+                    >
+                      <FaPen />
                     </button>
-                    <span className="tooltip">Pen</span>
+                    <span className="tooltip group-hover:opacity-100">Pen</span>
                   </div>
-                  <div className="tooltip-container">
-                    <button onClick={() => setDrawingTool("marker")}>
-                      <FaHighlighter />{" "}
+
+                  <div className="tooltip-container group">
+                    <button
+                      onClick={() => setDrawingTool("marker")}
+                      className="text-[#405d67] bg-transparent hover:text-[#2f444c] p-2 transition-colors"
+                    >
+                      <FaHighlighter />
                     </button>
-                    <span className="tooltip">Marker</span>
+                    <span className="tooltip group-hover:opacity-100">
+                      Marker
+                    </span>
                   </div>
-                  <div className="tooltip-container">
-                    <button onClick={() => setDrawingTool("brush")}>
-                      <FaPaintBrush />{" "}
+
+                  <div className="tooltip-container group">
+                    <button
+                      onClick={() => setDrawingTool("brush")}
+                      className="text-[#405d67] bg-transparent hover:text-[#2f444c] p-2 transition-colors"
+                    >
+                      <FaPaintBrush />
                     </button>
-                    <span className="tooltip">Brush</span>
+                    <span className="tooltip group-hover:opacity-100">
+                      Brush
+                    </span>
                   </div>
-                  <div className="tooltip-container">
-                    <button onClick={() => setDrawingTool("eraser")}>
-                      <FaEraser />{" "}
+
+                  <div className="tooltip-container group">
+                    <button
+                      onClick={() => setDrawingTool("eraser")}
+                      className="text-[#405d67] bg-transparent hover:text-[#2f444c] p-2 transition-colors"
+                    >
+                      <FaEraser />
                     </button>
-                    <span className="tooltip">Eraser</span>
+                    <span className="tooltip group-hover:opacity-100">
+                      Eraser
+                    </span>
                   </div>
+
                   {/* Settings button with sub-dropdown */}
                   <div className="settings-container">
                     <div className="tooltip-container">
@@ -196,9 +497,10 @@ const InteractiveBanner = () => {
                   </div>
                 </div>
               )}
-              <div onClick={() => setShowElementOptions(!showElementOptions)}>
+
+              <label onClick={() => setShowElementOptions(!showElementOptions)}>
                 Elements <FaChevronDown />
-              </div>
+              </label>
               {showElementOptions && (
                 <div className="sub-dropdown">
                   <div className="tooltip-container">
@@ -227,77 +529,90 @@ const InteractiveBanner = () => {
                   </div>
                 </div>
               )}
-              <div className="tool-section">
-                <label onClick={() => setShowTableOptions(!showTableOptions)}>
-                  <FaTable /> Table <FaChevronDown />
-                </label>
-                {showTableOptions && (
-                  <div className="dropdown">
-                    <div className="tooltip-container">
-                      <button className="table-btn">
-                        <FaTable />
-                      </button>
-                      <span className="tooltip">Create</span>
-                    </div>
-                    <div className="dropdown-container">
-                      <div className="tooltip-container">
-                        <button
-                          className="table-btn"
-                          onClick={() => setShowAddOptions(!showAddOptions)}
-                        >
-                          <FaPlus />
-                        </button>
-                        <span className="tooltip">Add</span>
-                      </div>
-                      {showAddOptions && (
-                        <div className="sub-dropdown">
-                          <button>Add Row</button>
-                          <button>Add Column</button>
-                        </div>
-                      )}
-                    </div>
-                    <div className="dropdown-container">
-                      <div className="tooltip-container">
-                        <button
-                          className="table-btn"
-                          onClick={() =>
-                            setShowRemoveOptions(!showRemoveOptions)
-                          }
-                        >
-                          <FaMinus />
-                        </button>
-                        <span className="tooltip">Remove</span>
-                      </div>
-                      {showRemoveOptions && (
-                        <div className="sub-dropdown">
-                          <button>Remove Row</button>
-                          <button>Remove Column</button>
-                        </div>
-                      )}
-                    </div>
+
+              <label onClick={() => setShowTableOptions(!showTableOptions)}>
+                Table <FaChevronDown />
+              </label>
+              {showTableOptions && (
+                <div className="dropdown">
+                  <div className="tooltip-container">
+                    <button className="table-btn">
+                      <FaTable />
+                    </button>
+                    <span className="tooltip">Create</span>
                   </div>
-                )}
-              </div>
+                  <div className="dropdown-container">
+                    <div className="tooltip-container">
+                      <button
+                        className="table-btn"
+                        onClick={() => setShowAddOptions(!showAddOptions)}
+                      >
+                        <FaPlus />
+                      </button>
+                      <span className="tooltip">Add</span>
+                    </div>
+                    {showAddOptions && (
+                      <div className="sub-dropdown">
+                        <button>Add Row</button>
+                        <button>Add Column</button>
+                      </div>
+                    )}
+                  </div>
+                  <div className="dropdown-container">
+                    <div className="tooltip-container">
+                      <button
+                        className="table-btn"
+                        onClick={() => setShowRemoveOptions(!showRemoveOptions)}
+                      >
+                        <FaMinus />
+                      </button>
+                      <span className="tooltip">Remove</span>
+                    </div>
+                    {showRemoveOptions && (
+                      <div className="sub-dropdown">
+                        <button>Remove Row</button>
+                        <button>Remove Column</button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>
       </div>
 
       {/* Banner Display */}
-      <motion.div className="banner" style={{ backgroundColor: background }}>
-        {uploads.length > 0 && (
-          <img
-            src={uploads[uploads.length - 1]}
-            alt="Background"
-            className="banner-image"
-          />
-        )}
-        {text && (
-          <h1 style={{ fontFamily: selectedFont, fontWeight: textStyle }}>
-            {text}
-          </h1>
-        )}
-      </motion.div>
+      <div
+        className="banner-container"
+        style={{ width: "100%", padding: "0 20px" }}
+      >
+        {/* Banner Display */}
+        <div
+          className="banner-container"
+          style={{ width: "100%", padding: "0 20px" }}
+        ></div>
+
+        <Banner
+          text={
+            text ||
+            "Creating at the intersection of code & creativity ✨\nFashion • Sports • Architecture • Automobiles\nMusic • Poetry • Film • Comics • Aesthetics"
+          }
+          bgColor={background}
+          fontSize={24}
+          textColor={textColor}
+          backgroundImage={backgroundImage}
+          activeImages={activeImages}
+          scrollY={0}
+          width={width}
+          height={height}
+          borderRadius={borderRadius}
+          selectedFont={selectedFont}
+          textStyle={textStyle}
+          onImageDrop={handleImageDrop}
+          onImageDelete={handleImageDelete}
+        />
+      </div>
     </div>
   );
 };

@@ -5,11 +5,11 @@ import BannerControls from "./components/BannerControls";
 import "./App.css";
 
 function App() {
-    return (
-        <div className="app-container">
-            <InteractiveBanner />
-        </div>
-    );
+  return (
+    <div className="app-container">
+      <InteractiveBanner />
+    </div>
+  );
 }
 
 export default App;
