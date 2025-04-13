@@ -1,6 +1,8 @@
 # Interactive Banner Designer
 
-![Banner Designer Screenshot](/Images/Interactive Banner Image.png)
+A responsive web application for creating custom banners with real-time previews, image uploads, and extensive styling options.
+
+![Banner Designer Screenshot](https://raw.githubusercontent.com/AdelekeVanessa/Frontend-Web-App-for-Interactive-Banner-Design/main/public/Images/Interactive%20Banner%20Image.png)
 
 A responsive web application for creating custom banners with real-time previews, image uploads, and extensive styling options.
 
@@ -93,7 +95,9 @@ Frontend-Web-App-for-Interactive-Banner-Design/
 
 ## How to Use
 
-![Banner Designer Video](/Video/Interactive Banner.mp4)
+[![Interactive Banner Demo](https://raw.githubusercontent.com/AdelekeVanessa/Frontend-Web-App-for-Interactive-Banner-Design/main/public/Images/Interactive%20Banner%20Image.png)](https://github.com/AdelekeVanessa/Frontend-Web-App-for-Interactive-Banner-Design/raw/main/public/Video/Interactive%20Banner.mp4)
+
+Click the image above to download the demo video.
 
 ### Customize Background:
 
